@@ -1,25 +1,18 @@
 #!/usr/bin/env bash
 #
 # Arranque da aplicação do cacifo no Raspberry Pi 400.
-# Carrega o .env (se existir), garante o ambiente virtual e lança em ecrã inteiro.
+# Cria o ambiente virtual, garante as dependências e lança em ecrã inteiro.
+# O .env é lido pela própria app (config.py), por isso não é preciso exportá-lo.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
-# Carregar variáveis de ambiente do .env, se presente.
-if [ -f .env ]; then
-  set -a
-  # shellcheck disable=SC1091
-  . ./.env
-  set +a
-fi
-
-# Ambiente virtual (criado na primeira execução).
+# Ambiente virtual + dependências (idempotente: instala/atualiza sempre).
 if [ ! -d .venv ]; then
   python3 -m venv .venv
   ./.venv/bin/pip install --upgrade pip
-  ./.venv/bin/pip install -r requirements.txt
 fi
+./.venv/bin/pip install -q -r requirements.txt
 
 # Evitar que o ecrã apague / poupança de energia (X11).
 if command -v xset >/dev/null 2>&1; then
