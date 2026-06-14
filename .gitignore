@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Ambiente / segredos
+.env
+raspberry/.env
+
+# Arduino
+*.hex
+build/
+
+# SO / editor
+.DS_Store
+Thumbs.db
+.vscode/

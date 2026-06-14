@@ -1,0 +1,10 @@
+# Aplicação do cacifo (Raspberry Pi 400)
+requests>=2.31
+
+# Necessário para mostrar o logótipo SVG (assets/logo.png) com escala nítida.
+# Sem Pillow, a app recorre a um logótipo desenhado como texto.
+Pillow>=10.0
+
+# Opcional: só para REGERAR assets/logo.png a partir do SVG da marca
+# (python assets/render_logo.py). Não é preciso em tempo de execução.
+# cairosvg>=2.7

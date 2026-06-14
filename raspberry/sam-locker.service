@@ -1,0 +1,23 @@
+# Unidade systemd para arrancar a aplicação do cacifo no boot (Raspberry Pi OS).
+#
+# Instalação:
+#   sudo cp sam-locker.service /etc/systemd/system/
+#   sudo systemctl enable --now sam-locker
+#
+# Ajustar User e o caminho WorkingDirectory/ExecStart conforme a instalação.
+[Unit]
+Description=SAM Cacifo Inteligente (kiosk)
+After=graphical.target network-online.target
+Wants=network-online.target
+
+[Service]
+User=pi
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+WorkingDirectory=/home/pi/p2-sam-locker/raspberry
+ExecStart=/home/pi/p2-sam-locker/raspberry/run_kiosk.sh
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=graphical.target
