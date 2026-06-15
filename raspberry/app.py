@@ -232,7 +232,8 @@ class LockerApp:
     def _bind_keys(self):
         for i in range(10):
             self.root.bind(str(i), self._on_key_digit)
-        self.root.bind("<KP_0>", self._on_key_digit)
+            # Numpad físico (NumLock ligado) envia keysyms KP_0..KP_9.
+            self.root.bind(f"<KP_{i}>", self._on_key_digit)
         self.root.bind("<BackSpace>", lambda e: self._on_backspace())
         self.root.bind("<Return>", lambda e: self._on_enter())
         self.root.bind("<KP_Enter>", lambda e: self._on_enter())
@@ -572,6 +573,11 @@ class LockerApp:
     # -------------------------------------------------------- entrada do PIN
     def _on_key_digit(self, event):
         ch = event.char
+        # Fallback para o numpad: se o char vier vazio, usa a keysym KP_<n>.
+        if (not ch or not ch.isdigit()) and event.keysym.startswith("KP_"):
+            suffix = event.keysym[3:]
+            if suffix.isdigit():
+                ch = suffix
         if ch and ch.isdigit():
             self._add_digit(ch)
 
