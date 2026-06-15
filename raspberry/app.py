@@ -121,14 +121,28 @@ class LockerApp:
         self._start_telemetry()
 
     # ------------------------------------------------------------------ setup
+    def _apply_fullscreen(self):
+        """Aplica (e reforça) o ecrã inteiro. No Raspberry, o gestor de janelas
+        ignora por vezes o pedido feito antes de a janela estar mapeada — por
+        isso reaplica-se. Também usa a resolução do ecrã como rede de segurança."""
+        try:
+            sw = self.root.winfo_screenwidth()
+            sh = self.root.winfo_screenheight()
+            self.root.geometry(f"{sw}x{sh}+0+0")
+            self.root.attributes("-fullscreen", True)
+            self.root.lift()
+            self.root.focus_force()
+        except tk.TclError:
+            self.root.geometry(f"{config.WINDOW_W}x{config.WINDOW_H}")
+
     def _setup_window(self):
         self.root.title("SAM — Cacifo Inteligente")
         self.root.configure(bg=self.c["bg_top"])
         if config.FULLSCREEN:
-            try:
-                self.root.attributes("-fullscreen", True)
-            except tk.TclError:
-                self.root.geometry(f"{config.WINDOW_W}x{config.WINDOW_H}")
+            self._apply_fullscreen()
+            # Reforça após o WM mapear a janela (Pi/X11/Wayland pode ignorar à 1ª).
+            for delay in (150, 600, 1500):
+                self.root.after(delay, self._apply_fullscreen)
         else:
             # Janela limitada ao ecrã (margem para barra de título/tarefas),
             # PRESERVANDO o rácio para o layout não ficar esmagado.
@@ -223,9 +237,17 @@ class LockerApp:
         self.root.bind("<Return>", lambda e: self._on_enter())
         self.root.bind("<KP_Enter>", lambda e: self._on_enter())
         self.root.bind("<Escape>", lambda e: self._quit())
+        self.root.bind("<F11>", lambda e: self._toggle_fullscreen())
         # Simulação da porta pelo teclado (modos de teste).
         self.root.bind("o", lambda e: self._sim_set_door("ABERTA"))
         self.root.bind("c", lambda e: self._sim_set_door("FECHADA"))
+
+    def _toggle_fullscreen(self):
+        is_fs = bool(self.root.attributes("-fullscreen"))
+        self.root.attributes("-fullscreen", not is_fs)
+        if not is_fs:
+            self.root.lift()
+            self.root.focus_force()
 
     # --------------------------------------------------------------- rendering
     def _on_resize(self, event):

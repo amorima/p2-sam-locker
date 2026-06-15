@@ -104,7 +104,22 @@ Todos aceitam o cabeçalho `X-Internal-Key` (= `INTERNAL_API_KEY`) ou um JWT.
 - Raspberry Pi OS com ambiente gráfico (X11).
 - Python 3 + Tkinter (`sudo apt install python3-tk`).
 
-### Instalação e arranque
+### Arranque com um clique (sem linha de comandos)
+
+- **Windows (PC de testes):** duplo-clique em **`start.bat`** — cria o `.venv`,
+  instala as dependências e arranca a app.
+- **Raspberry Pi:** correr **uma vez** `bash install_desktop.sh` (cria um ícone
+  **"SAM Cacifo"** no ambiente de trabalho). A partir daí, **duplo-clique no
+  ícone** instala as dependências (1ª vez) e arranca a app em ecrã inteiro.
+
+Pré-requisito no Pi (uma vez): `sudo apt install -y python3-venv python3-tk`.
+
+### Diagnóstico
+
+`python check.py` (ou `./.venv/bin/python check.py`) verifica **dependências +
+leitura do `.env` + ligação ao backend** e indica o que está mal.
+
+### Instalação e arranque (linha de comandos)
 
 ```bash
 cd raspberry
@@ -115,6 +130,7 @@ chmod +x run_kiosk.sh
 
 > O `config.py` carrega automaticamente o `.env` ao lado de `app.py` (em
 > qualquer plataforma), por isso `python app.py` também funciona sem o script.
+> No arranque, a app imprime o backend em uso — útil para confirmar o `.env`.
 
 Para arrancar automaticamente no boot, instalar a unidade systemd:
 
